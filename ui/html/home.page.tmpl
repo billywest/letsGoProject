@@ -16,7 +16,9 @@
           <td>
             <a href='/snippet?id={{.ID}}'>{{.Title}}</a>
           </td>
-          <td>{{.Created}}</td>
+          <td>
+            <time>{{.Created | humanDate | printf "Created: %s"}}</time>
+          </td>
           <td>#{{.ID}}</td>
         </tr>
       {{end}}
