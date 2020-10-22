@@ -44,7 +44,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Create a new snippet..."))
+	app.render(w, r, "create.page.tmpl", nil)
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
@@ -54,10 +54,19 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 
-	title := "O snail"
-	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
-	expires := "7"
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
 
+	// Use the r.PostForm.Get() method to retrieve the relevant data fields
+	// from the r.PostForm map.
+	title := r.PostForm.Get("title")
+	content := r.PostForm.Get("content")
+	expires := r.PostForm.Get("expires")
+
+	// Create a new snippet record in the database using the form data.
 	id, err := app.snippets.Insert(title, content, expires)
 	if err != nil {
 		app.serverError(w, err)
