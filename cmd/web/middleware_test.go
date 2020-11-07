@@ -57,53 +57,71 @@ func TestSecureHeaders(t *testing.T) {
 // 	}
 // }
 
-// func TestRequiredAuthentication(t *testing.T) {
-// 	app := newTestApplication(t)
-// 	user := "test"
-// 	email := "test@gmail.com"
-// 	password := "Test@123"
+func TestRequiredAuthentication(t *testing.T) {
+	user := "testuser2"
+	email := "testuser2@gmail.com"
+	password := "Test@123"
 
-// 	rr := httptest.NewRecorder()
-// 	err := app.users.Insert(user, email, password)
+	app := newTestApplication(t)
+	ts := newTestServer(t, app.routes())
+	defer ts.Close()
 
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
+	app.users.Insert(user, email, password)
 
-// 	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 		w.Write([]byte("OK"))
-// 	})
+	// code, _, body := ts.get(t, "/user/login")
 
-// 	r, err := http.NewRequest(http.MethodGet, "/snippet/create", nil)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+	// if code != http.StatusSeeOther {
+	// 	t.Errorf("want %d; got %d", http.StatusSeeOther, code)
+	// }
 
-// 	id, err := app.users.Authenticate(email, password)
-// 	app.session.Put(r, "authenticatedUserID", id)
-// 	app.authenticate(next)
-// 	app.requireAuthentication(next).ServeHTTP(rr, r)
+	// if string(body) != "StatusSeeOther" {
+	// 	t.Errorf("want body to equal %q", "StatusSeeOther")
+	// }
 
-// 	rs := rr.Result()
+	// rr := httptest.NewRecorder()
+	// err := app.users.Insert(user, email, password)
 
-// 	cacheControl := rs.Header.Get("Cache-Control")
-// 	if cacheControl != "no-store" {
-// 		t.Errorf("want %q; got %q", "no-store", cacheControl)
-// 	}
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
-// 	if rs.StatusCode != http.StatusOK {
-// 		t.Errorf("want %d; got %d", http.StatusOK, rs.StatusCode)
-// 	}
+	// next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 	w.Write([]byte("OK"))
+	// })
 
-// 	defer rs.Body.Close()
+	// ts := httptest.NewTLSServer(app.routes())
+	// defer ts.Close()
 
-// 	body, err := ioutil.ReadAll(rs.Body)
+	// r, err := http.NewRequest(http.MethodGet, "/snippet/create", nil)
+	// if err != nil {
+	// 	t.Fatal(err)
+	// }
 
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+	// id, err := app.users.Authenticate(email, password)
+	// app.session.Put(r, "authenticatedUserID", id)
+	// app.authenticate(next)
+	// app.requireAuthentication(next).ServeHTTP(rr, r)
 
-// 	if string(body) != "OK" {
-// 		t.Errorf("want body to equal %q", "OK")
-// 	}
-// }
+	// rs := rr.Result()
+
+	// cacheControl := rs.Header.Get("Cache-Control")
+	// if cacheControl != "no-store" {
+	// 	t.Errorf("want %q; got %q", "no-store", cacheControl)
+	// }
+
+	// if rs.StatusCode != http.StatusOK {
+	// 	t.Errorf("want %d; got %d", http.StatusOK, rs.StatusCode)
+	// }
+
+	// defer rs.Body.Close()
+
+	// body, err := ioutil.ReadAll(rs.Body)
+
+	// if err != nil {
+	// 	t.Fatal(err)
+	// }
+
+	// if string(body) != "OK" {
+	// 	t.Errorf("want body to equal %q", "OK")
+	// }
+}
