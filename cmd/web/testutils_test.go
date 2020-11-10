@@ -1,40 +1,36 @@
 package main
 
 import (
-	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httptest"
 	"testing"
+	"time"
 
-	_ "github.com/go-sql-driver/mysql"
-	"letsgo.net/snippetbox/pkg/models/mysql"
+	"letsgo.net/snippetbox/pkg/models/mock"
+
+	"github.com/golangcollege/sessions"
 )
 
 func newTestApplication(t *testing.T) *application {
-	// dsn := flag.String("dsn", "web:Bwsxdcftest123@/snippetbox?parseTime=true", "MySQL data source name")
-	// addr := flag.String("addr", ":4000", "HTTP network address")
-	// secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key")
-
-	// infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	// errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
-
-	db, err := openDB("web:Bwsxdcftest123@/snippetbox?parseTime=true")
-	flag.Parse()
-
+	templateCache, err := newTemplateCache("./../../ui/html/")
 	if err != nil {
-		fmt.Println(err)
+		t.Fatal(err)
 	}
 
-	defer db.Close()
+	session := sessions.New([]byte("3dSm5MnygFHh7XidAtbskXrjbwfoJcbJ"))
+	session.Lifetime = 12 * time.Hour
+	session.Secure = true
 
 	return &application{
-		errorLog: log.New(ioutil.Discard, "", 0),
-		infoLog:  log.New(ioutil.Discard, "", 0),
-		users:    &mysql.UserModel{DB: db},
+		errorLog:      log.New(ioutil.Discard, "", 0),
+		infoLog:       log.New(ioutil.Discard, "", 0),
+		session:       session,
+		snippets:      &mock.SnippetModel{},
+		templateCache: templateCache,
+		users:         &mock.UserModel{},
 	}
 }
 
