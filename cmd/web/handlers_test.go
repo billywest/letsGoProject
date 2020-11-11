@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"net/url"
 	"testing"
@@ -105,7 +104,7 @@ func TestSignupUser(t *testing.T) {
 			if !bytes.Contains(body, tt.wantBody) {
 				t.Errorf("want body %s to contain %q", body, tt.wantBody)
 			}
-			fmt.Println("Test Body: ", string(body))
+			// fmt.Println("Test Body: ", string(body))
 		})
 	}
 }
